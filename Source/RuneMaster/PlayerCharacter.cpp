@@ -75,8 +75,11 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 	// Set the meshes direction based on the direction the character is moving
 	// May want to set this Directions * their respective values as this method
 	//  doesn't turn face the keys direction when hitting an object
-	FRotator LookDirection = GetVelocity().Rotation();
-	LookDirection.Yaw += RotationOffset;
-	GetMesh()->SetRelativeRotation(LookDirection);
+	if (USkeletalMeshComponent Mesh* = GetMesh())
+	{
+		FRotator LookDirection = GetVelocity().Rotation();
+		LookDirection.Yaw += RotationOffset;
+		Mesh->SetRelativeRotation(LookDirection);
+	}
 }
 
