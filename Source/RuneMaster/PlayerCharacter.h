@@ -37,6 +37,8 @@ private:
 	USpringArmComponent* SpringArm;
 	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* Camera;
+	UPROPERTY(EditAnywhere)
+	float RotationOffset = -90.f;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")

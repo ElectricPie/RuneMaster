@@ -56,18 +56,27 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
-	const FVector2d DirectionValue = Value.Get<FVector2d>();
-
 	if (Controller == nullptr) return;
+
+	const FVector2d DirectionValue = Value.Get<FVector2d>();
 
 	// Find forward
 	const FRotator Rotation = Controller->GetControlRotation();
 	const FRotator YawRotation(0, Rotation.Yaw, 0);
 
+	// Get the directions of the character
 	const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
+	// Apply forward and right movement
 	AddMovementInput(ForwardDirection, DirectionValue.X);
 	AddMovementInput(RightDirection, DirectionValue.Y);
+
+	// Set the meshes direction based on the direction the character is moving
+	// May want to set this Directions * their respective values as this method
+	//  doesn't turn face the keys direction when hitting an object
+	FRotator LookDirection = GetVelocity().Rotation();
+	LookDirection.Yaw += RotationOffset;
+	GetMesh()->SetRelativeRotation(LookDirection);
 }
 
