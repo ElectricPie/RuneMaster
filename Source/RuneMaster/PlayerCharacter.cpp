@@ -52,6 +52,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	{
 		PlayerEnhancedInputComponent->BindAction(MoveForwardInputAction, ETriggerEvent::Triggered, this, &APlayerCharacter::MoveForward);
 		PlayerEnhancedInputComponent->BindAction(MoveRightInputAction, ETriggerEvent::Triggered, this, &APlayerCharacter::MoveRight);
+		PlayerEnhancedInputComponent->BindAction(MoveInputAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
 	}
 }
 
@@ -87,5 +88,12 @@ void APlayerCharacter::MoveRight(const FInputActionValue& Value)
 
 	// Add movement in that direction
 	AddMovementInput(Direction, DirectionValue);
+}
+
+void APlayerCharacter::Move(const FInputActionValue& Value)
+{
+	const FVector2d DirectionValue = Value.Get<FVector2d>();
+
+	UE_LOG(LogTemp, Warning, TEXT("Dir: %s"), *DirectionValue.ToString());
 }
 
