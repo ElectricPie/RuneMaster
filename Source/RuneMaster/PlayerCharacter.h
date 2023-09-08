@@ -3,11 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InputActionValue.h"
 #include "GameFramework/Character.h"
 #include "PlayerCharacter.generated.h"
 
 class UCameraComponent;
 class USpringArmComponent;
+class UInputMappingContext;
+class UInputAction;
 
 UCLASS()
 class RUNEMASTER_API APlayerCharacter : public ACharacter
@@ -21,7 +24,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -34,5 +37,15 @@ private:
 	USpringArmComponent* SpringArm;
 	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* Camera;
-	
+
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+	UInputMappingContext* PlayerMappingContext;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+	UInputAction* MoveForwardInputAction;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+	UInputAction* MoveRightInputAction;
+
+	void MoveForward(const FInputActionValue& Value);
+	void MoveRight(const FInputActionValue& Value);
 };
