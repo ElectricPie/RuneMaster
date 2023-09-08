@@ -27,7 +27,7 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+	if (const APlayerController* PlayerController = Cast<APlayerController>(GetController()))
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
@@ -50,50 +50,24 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 	if (UEnhancedInputComponent* PlayerEnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
-		PlayerEnhancedInputComponent->BindAction(MoveForwardInputAction, ETriggerEvent::Triggered, this, &APlayerCharacter::MoveForward);
-		PlayerEnhancedInputComponent->BindAction(MoveRightInputAction, ETriggerEvent::Triggered, this, &APlayerCharacter::MoveRight);
 		PlayerEnhancedInputComponent->BindAction(MoveInputAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
 	}
-}
-
-void APlayerCharacter::MoveForward(const FInputActionValue& Value)
-{
-	const float DirectionValue = Value.Get<float>();
-	
-	if (Controller == nullptr || DirectionValue == 0.f) return;
-	
-	// Find out which way is forward
-	const FRotator Rotation = Controller->GetControlRotation();
-	const FRotator YawRotation(0, Rotation.Yaw, 0);
-
-	// Get forward vector
-	const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-	
-	// Add movement in that direction
-	AddMovementInput(Direction, DirectionValue);
-}
-
-void APlayerCharacter::MoveRight(const FInputActionValue& Value)
-{
-	const float DirectionValue = Value.Get<float>();
-	
-	if (Controller == nullptr || DirectionValue == 0.f) return;
-
-	// Find out which way is right
-	const FRotator Rotation = Controller->GetControlRotation();
-	const FRotator YawRotation(0, Rotation.Yaw, 0);
-	
-	// Get right vector 
-	const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-
-	// Add movement in that direction
-	AddMovementInput(Direction, DirectionValue);
 }
 
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
 	const FVector2d DirectionValue = Value.Get<FVector2d>();
 
-	UE_LOG(LogTemp, Warning, TEXT("Dir: %s"), *DirectionValue.ToString());
+	if (Controller == nullptr) return;
+
+	// Find forward
+	const FRotator Rotation = Controller->GetControlRotation();
+	const FRotator YawRotation(0, Rotation.Yaw, 0);
+
+	const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+
+	AddMovementInput(ForwardDirection, DirectionValue.X);
+	AddMovementInput(RightDirection, DirectionValue.Y);
 }
 
