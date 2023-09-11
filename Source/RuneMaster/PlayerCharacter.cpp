@@ -51,6 +51,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	if (UEnhancedInputComponent* PlayerEnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		PlayerEnhancedInputComponent->BindAction(MoveInputAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
+		PlayerEnhancedInputComponent->BindAction(ZoomInputAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Zoom);
 	}
 }
 
@@ -81,5 +82,26 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 		LookDirection.Yaw += RotationOffset;
 		MeshComponent->SetRelativeRotation(LookDirection);
 	}
+}
+
+void APlayerCharacter::Zoom(const FInputActionValue& Value)
+{
+	if (!SpringArm) return;
+	
+	const float ScrollDirection = Value.Get<float>();
+	const float ScrollSpeed = FApp::GetDeltaTime() * ZoomSpeedModifier * ScrollDirection;
+
+	// Limit the springs arm length to the Min/Max
+	float NewArmLength = SpringArm->TargetArmLength += ScrollSpeed;
+	if (NewArmLength > MaxZoom)
+	{
+		NewArmLength = MaxZoom;
+	}
+	if (NewArmLength < MinZoom)
+	{
+		NewArmLength = MinZoom;
+	}
+
+	SpringArm->TargetArmLength = NewArmLength;
 }
 
