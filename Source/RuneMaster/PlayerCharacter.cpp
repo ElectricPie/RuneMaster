@@ -51,6 +51,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	if (UEnhancedInputComponent* PlayerEnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		PlayerEnhancedInputComponent->BindAction(MoveInputAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
+		PlayerEnhancedInputComponent->BindAction(ZoomInputAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Zoom);
 	}
 }
 
@@ -81,5 +82,12 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 		LookDirection.Yaw += RotationOffset;
 		MeshComponent->SetRelativeRotation(LookDirection);
 	}
+}
+
+void APlayerCharacter::Zoom(const FInputActionValue& Value)
+{
+	const float Scroll = Value.Get<float>();
+
+	
 }
 

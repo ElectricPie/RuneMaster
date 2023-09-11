@@ -45,6 +45,9 @@ protected:
 	UInputMappingContext* PlayerMappingContext;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
 	UInputAction* MoveInputAction;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+	UInputAction* ZoomInputAction;
 	
 	void Move(const FInputActionValue& Value);
+	void Zoom(const FInputActionValue& Value);
 };
