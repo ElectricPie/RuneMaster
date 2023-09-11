@@ -91,8 +91,17 @@ void APlayerCharacter::Zoom(const FInputActionValue& Value)
 	const float ScrollDirection = Value.Get<float>();
 	const float ScrollSpeed = FApp::GetDeltaTime() * ZoomSpeedModifier * ScrollDirection;
 
-	UE_LOG(LogTemp, Warning, TEXT("Scroll Speed %f"), ScrollSpeed);
+	// Limit the springs arm length to the Min/Max
+	float NewArmLength = SpringArm->TargetArmLength += ScrollSpeed;
+	if (NewArmLength > MaxZoom)
+	{
+		NewArmLength = MaxZoom;
+	}
+	if (NewArmLength < MinZoom)
+	{
+		NewArmLength = MinZoom;
+	}
 
-	SpringArm->TargetArmLength += ScrollSpeed;
+	SpringArm->TargetArmLength = NewArmLength;
 }
 
