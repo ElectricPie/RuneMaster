@@ -57,5 +57,5 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Camera")
 	float MaxZoom = 2000.f;
 	UPROPERTY(EditAnywhere, Category = "Camera")
-	float ZoomSpeedModifier = 100.f;
+	float ZoomSpeedModifier = 2000.f;
 };
