@@ -86,8 +86,13 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 
 void APlayerCharacter::Zoom(const FInputActionValue& Value)
 {
-	const float Scroll = Value.Get<float>();
-
+	if (!SpringArm) return;
 	
+	const float ScrollDirection = Value.Get<float>();
+	const float ScrollSpeed = FApp::GetDeltaTime() * ZoomSpeedModifier * ScrollDirection;
+
+	UE_LOG(LogTemp, Warning, TEXT("Scroll Speed %f"), ScrollSpeed);
+
+	SpringArm->TargetArmLength += ScrollSpeed;
 }
 

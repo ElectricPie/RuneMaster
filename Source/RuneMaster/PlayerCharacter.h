@@ -50,4 +50,12 @@ protected:
 	
 	void Move(const FInputActionValue& Value);
 	void Zoom(const FInputActionValue& Value);
+
+private:
+	UPROPERTY(EditAnywhere, Category = "Camera")
+	float MinZoom = 600.f;
+	UPROPERTY(EditAnywhere, Category = "Camera")
+	float MaxZoom = 2000.f;
+	UPROPERTY(EditAnywhere, Category = "Camera")
+	float ZoomSpeedModifier = 100.f;
 };
