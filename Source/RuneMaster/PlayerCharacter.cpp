@@ -41,6 +41,21 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	// Set the meshes direction based on the direction the character is moving
+	// May want to set this Directions * their respective values as this method
+	//  doesn't turn face the keys direction when hitting an object
+	if (USkeletalMeshComponent* MeshComponent = GetMesh())
+	{
+		// Only update the rotation when moving
+		const FVector Velocity = GetVelocity();
+		if (Velocity.Length() > 10.f)
+		{
+			// Need to keep track of the direction as it get reset without setting the rotation every frame
+			LookDirection = Velocity.Rotation();
+			LookDirection.Yaw += RotationOffset;
+		}
+		MeshComponent->SetRelativeRotation(LookDirection);
+	}
 }
 
 // Called to bind functionality to input
@@ -72,16 +87,6 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 	// Apply forward and right movement
 	AddMovementInput(ForwardDirection, DirectionValue.X);
 	AddMovementInput(RightDirection, DirectionValue.Y);
-
-	// Set the meshes direction based on the direction the character is moving
-	// May want to set this Directions * their respective values as this method
-	//  doesn't turn face the keys direction when hitting an object
-	if (USkeletalMeshComponent* MeshComponent = GetMesh())
-	{
-		FRotator LookDirection = GetVelocity().Rotation();
-		LookDirection.Yaw += RotationOffset;
-		MeshComponent->SetRelativeRotation(LookDirection);
-	}
 }
 
 void APlayerCharacter::Zoom(const FInputActionValue& Value)
