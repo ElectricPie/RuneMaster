@@ -58,4 +58,6 @@ private:
 	float MaxZoom = 2000.f;
 	UPROPERTY(EditAnywhere, Category = "Camera")
 	float ZoomSpeedModifier = 2000.f;
+
+	FRotator LookDirection;
 };
