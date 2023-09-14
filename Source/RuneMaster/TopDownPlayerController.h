@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "TopDownPlayerController.generated.h"
 
+class UGridSubsystem;
 class UInputAction;
 class UInputMappingContext;
 /**
@@ -26,6 +27,12 @@ private:
 	UInputMappingContext* InputMappingContext;
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* SelectInputAction;
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	float SelectionRaycastDistance = 2000.f;
 
+	UPROPERTY()
+	UGridSubsystem* Grid;
+
+	bool RaycastToMouse(FVector& HitLocation, AActor*& HitActor);
 	void Select();
 };
