@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "Building.generated.h"
 
+class UBoxComponent;
+
 UCLASS()
 class RUNEMASTER_API ABuilding : public AActor
 {
@@ -23,4 +25,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+private:
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	UBoxComponent* BoxCollider;
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	UStaticMeshComponent* MeshComponent;
 };

@@ -3,12 +3,19 @@
 
 #include "Building.h"
 
+#include "Components/BoxComponent.h"
+
 // Sets default values
 ABuilding::ABuilding()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	BoxCollider = CreateDefaultSubobject<UBoxComponent>(TEXT("Box Collider"));
+	RootComponent = BoxCollider;
+	
+	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BuildingMesh"));
+	MeshComponent->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
