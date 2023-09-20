@@ -5,6 +5,7 @@
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "GridSubsystem.h"
 
 void ATopDownPlayerController::BeginPlay()
 {
@@ -16,6 +17,8 @@ void ATopDownPlayerController::BeginPlay()
 	{
 		InputSubsystem->AddMappingContext(InputMappingContext, 0);
 	}
+
+	Grid = GetWorld()->GetSubsystem<UGridSubsystem>();
 }
 
 void ATopDownPlayerController::SetupInputComponent()
@@ -61,12 +64,12 @@ bool ATopDownPlayerController::RaycastToMouse(FVector& HitLocation, AActor*& Hit
 
 void ATopDownPlayerController::Select()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Select"));
-
 	FVector HitLocation;
 	AActor* HitActor = nullptr;
 	if (RaycastToMouse(HitLocation, HitActor))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Hit %s at %s"), *HitActor->GetActorLabel(), *HitLocation.ToString());
+		FVector GridPos = Grid->GetNodeFromWorldSpace(HitLocation);
+
+		
 	}
 }
