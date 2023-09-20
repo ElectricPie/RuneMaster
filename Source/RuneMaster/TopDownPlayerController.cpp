@@ -68,8 +68,9 @@ void ATopDownPlayerController::Select()
 	AActor* HitActor = nullptr;
 	if (RaycastToMouse(HitLocation, HitActor))
 	{
-		FVector GridPos = Grid->GetNodeFromWorldSpace(HitLocation);
-
+		const int* GridPos = Grid->GetNodeFromWorldSpace(HitLocation);
+		const FVector NodeWorldSpace = Grid->GetNodeWorldPosition(GridPos[0], GridPos[1]);
 		
+		DrawDebugSphere(GetWorld(), NodeWorldSpace, Grid->GetNodeSize() / 2, 12, FColor::Red, false, 2.f);
 	}
 }

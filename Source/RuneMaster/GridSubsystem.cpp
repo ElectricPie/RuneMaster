@@ -3,14 +3,23 @@
 
 #include "GridSubsystem.h"
 
-FVector UGridSubsystem::GetNodeFromWorldSpace(const FVector& WorldPosition) const
+int* UGridSubsystem::GetNodeFromWorldSpace(const FVector& WorldPosition) const
 {
-	const FVector RoundedWorldPosition = FVector(
-		FMath::RoundHalfFromZero(WorldPosition.X / GridNodeSize),
-		FMath::RoundHalfFromZero(WorldPosition.Y / GridNodeSize),
-		FMath::CeilToFloat(0.f));
-
-	DrawDebugSphere(GetWorld(), RoundedWorldPosition * GridNodeSize, GridNodeSize / 2, 12, FColor::Red, false, 2.f);
+	const int GridX = WorldPosition.X == 0 ? 0 : FMath::RoundHalfFromZero(WorldPosition.X / GridNodeSize);
+	const int GridY = WorldPosition.Y == 0 ? 0 : FMath::RoundHalfFromZero(WorldPosition.Y / GridNodeSize);
 	
-	return RoundedWorldPosition;
+	int* GridPosition = new int[2] {GridX, GridY};
+	
+	return GridPosition;
+}
+
+FVector UGridSubsystem::GetNodeWorldPosition(const int X, const int Y) const
+{
+	const FVector NodeWorldPosition(X * GridNodeSize, Y * GridNodeSize, 0.f);
+	return NodeWorldPosition;
+}
+
+float UGridSubsystem::GetNodeSize() const
+{
+	return GridNodeSize;
 }
