@@ -7,6 +7,8 @@
 #include "Inventory.generated.h"
 
 
+class UItemDataAsset;
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class RUNEMASTER_API UInventory : public UActorComponent
 {
@@ -24,5 +26,7 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-		
+private:
+	UPROPERTY(EditAnywhere)
+	UItemDataAsset* DebugItem;
 };

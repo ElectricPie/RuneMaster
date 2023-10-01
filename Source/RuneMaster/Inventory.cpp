@@ -3,6 +3,8 @@
 
 #include "Inventory.h"
 
+#include "ItemDataAsset.h"
+
 // Sets default values for this component's properties
 UInventory::UInventory()
 {
@@ -20,7 +22,9 @@ void UInventory::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
+	if (!DebugItem) return;
 	
+	UE_LOG(LogTemp, Warning, TEXT("Debug Item: %s"), *DebugItem->GetItemName())
 }
 
 

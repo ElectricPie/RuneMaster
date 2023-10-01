@@ -13,5 +13,15 @@ UCLASS()
 class RUNEMASTER_API UItemDataAsset : public UDataAsset
 {
 	GENERATED_BODY()
+
+public:
+	FString GetItemName();
+	UTexture2D* GetItemImage() const;
 	
+private:
+	UPROPERTY(EditDefaultsOnly)
+	FString ItemName;
+
+	UPROPERTY(EditDefaultsOnly)
+	UTexture2D* ItemImage;
 };
