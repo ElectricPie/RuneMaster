@@ -22,35 +22,34 @@ void UInventory::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	ItemStacks = TArray<FItemContainer*>();
-	ItemStacks.Init(nullptr, InventorySlotCount);
+	ItemStacks = TArray<TSharedRef<FItemContainer>>();
+	for (int32 i = 0; i < InventorySlotCount; i++)
+	{
+		TSharedRef<FItemContainer> NewItemContainer = MakeShared<FItemContainer>(nullptr, 0);
+		ItemStacks.Add(NewItemContainer);
+	}
+
 	
 	if (!DebugItemDAOne || !DebugItemDATwo) return;
+
+	TSharedRef<FItemContainer> DebugItemOne = MakeShared<FItemContainer>(DebugItemDAOne, 97);
+	TSharedRef<FItemContainer> DebugItemTwo = MakeShared<FItemContainer>(DebugItemDATwo, 20);
+	TSharedRef<FItemContainer> DebugEmpty = MakeShared<FItemContainer>(nullptr, 0);
 	
-	FItemContainer DebugItemOne = {
-		*DebugItemDAOne, // Item
-		1000 // Count
-	};
-
-	FItemContainer DebugItemTwo = {
-		*DebugItemDAOne, // Item
-		52 // Count
-	};
-
-	FItemContainer* SwappedItemOne = SwapItem(&DebugItemOne, 1);
-	if (SwappedItemOne)
+	TSharedRef<FItemContainer> SwappedItemOne = SwapItem(DebugItemOne, 1);
+	if (SwappedItemOne->Item)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("1: Returned %i of %s"), SwappedItemOne->Count, *SwappedItemOne->Item.GetItemName());
+		UE_LOG(LogTemp, Warning, TEXT("1: Returned %i of %s"), SwappedItemOne->Count, *SwappedItemOne->Item->GetItemName());
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("1: Item 1 No items returned"));
 	}
 	
-	FItemContainer* SwappedItemTwo = SwapItem(&DebugItemTwo, 1);
-	if (SwappedItemTwo)
+	TSharedRef<FItemContainer> SwappedItemTwo = SwapItem(DebugItemTwo, 1);
+	if (SwappedItemTwo->Item)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("2: Returned %i of %s"), SwappedItemTwo->Count, *SwappedItemTwo->Item.GetItemName());
+		UE_LOG(LogTemp, Warning, TEXT("2: Returned %i of %s"), SwappedItemTwo->Count, *SwappedItemTwo->Item->GetItemName());
 	}
 	else
 	{
@@ -67,38 +66,36 @@ void UInventory::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompo
 	// ...
 }
 
-UInventory::FItemContainer* UInventory::SwapItem(FItemContainer* ItemContainer, int16 SlotIndex)
+TSharedRef<UInventory::FItemContainer> UInventory::SwapItem(TSharedRef<FItemContainer> ItemContainer, int16 SlotIndex)
 {
-	FItemContainer* ReturnContainer = nullptr;
-	
 	// Prevent values outside of the inventory size
 	SlotIndex = FMath::Clamp(SlotIndex, 0, InventorySlotCount);
 
-	FItemContainer* ItemInSlot = ItemStacks[SlotIndex];
+	TSharedRef<FItemContainer> ItemInSlot = ItemStacks[SlotIndex];
 	
-	// Empty slot or emp
-	if (!ItemInSlot)
+	// Empty slot
+	if (!ItemInSlot->Item)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Empty"));
 		ItemStacks[SlotIndex] = ItemContainer;
-		return nullptr;
+		return ItemInSlot;
 	}
 
 	// TODO: Implement replacing with nothing
 	// Temp solution for replacing slot with nothing
-	if (!ItemInSlot)
+	if (!ItemContainer->Item)
 	{
-		return nullptr;
+		return ItemContainer;
 	}
 
 	// Combine item stacks if of the same types
-	if (*ItemInSlot == *ItemContainer)
+	if (ItemInSlot.Get() == ItemContainer.Get())
 	{
 		// Prevent underflow
 		uint16 StackFreeSpace = 0;
-		if (ItemInSlot->Count < ItemInSlot->Item.GetStackSize())
+		if (ItemInSlot->Count < ItemInSlot->Item->GetStackSize())
 		{
-			StackFreeSpace = ItemInSlot->Item.GetStackSize() - ItemInSlot->Count;
+			StackFreeSpace = ItemInSlot->Item->GetStackSize() - ItemInSlot->Count;
 		}
 		
 		// Send back the items if the slot is full
@@ -111,21 +108,17 @@ UInventory::FItemContainer* UInventory::SwapItem(FItemContainer* ItemContainer, 
 		if (StackFreeSpace < ItemContainer->Count)
 		{
 			const uint16 Overfill = ItemContainer->Count - StackFreeSpace;
-			ItemStacks[SlotIndex]->Count = ItemInSlot->Item.GetStackSize();
-			ReturnContainer = new FItemContainer {
-				ItemInSlot->Item, // Item
-				Overfill // Count
-			};
-			return ReturnContainer;
+			ItemStacks[SlotIndex]->Count = ItemInSlot->Item->GetStackSize();
+			
+			return MakeShared<FItemContainer>(ItemInSlot->Item, Overfill);
 		}
 		
 		// Added all items to stack
 		ItemInSlot->Count += ItemContainer->Count;
-		return nullptr;
+		return MakeShared<FItemContainer>(nullptr, 0);
 	}
 
 	// Swap the items
-	ReturnContainer = ItemStacks[SlotIndex];
 	ItemStacks[SlotIndex] = ItemContainer;
-	return ReturnContainer;
+	return ItemInSlot;
 }

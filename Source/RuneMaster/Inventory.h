@@ -31,12 +31,20 @@ private:
 	// Will probably need to move this to its own class
 	struct FItemContainer
 	{
-		UItemDataAsset& Item;
-		uint16 Count;
+		UItemDataAsset* Item = nullptr;
+		uint16 Count = 0;
 
-		bool operator == (const FItemContainer& Other) const
+		FItemContainer(UItemDataAsset* ItemDataAsset, uint16 ItemCount)
 		{
-			return Other.Item.GetName() == this->Item.GetName();
+			Item = ItemDataAsset;
+			Count = ItemCount;
+		}
+
+		bool operator==(const FItemContainer& Other) const
+		{
+			if (!Item || !Other.Item) return false;
+			
+			return Other.Item->GetName() == this->Item->GetName();
 		}
 	};
 
@@ -48,7 +56,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	UItemDataAsset* DebugItemDATwo;
 	
-	TArray<FItemContainer*> ItemStacks;
+	TArray<TSharedRef<FItemContainer>> ItemStacks;
 
 public:
 	/**
@@ -58,5 +66,5 @@ public:
 	 * @return Returns item at the slot, can be a nullptr. If the same item is in the slot already then it increases the
 	 * inventories item count and return an ItemContainer with a count that would not fit in the inventories container.
 	 */
-	FItemContainer* SwapItem(FItemContainer* ItemContainer, int16 SlotIndex);
+	TSharedRef<FItemContainer> SwapItem(TSharedRef<FItemContainer> ItemContainer, int16 SlotIndex);
 };
