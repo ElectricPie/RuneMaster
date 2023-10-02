@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ItemDataAsset.h"
 #include "Components/ActorComponent.h"
 #include "Inventory.generated.h"
 
@@ -31,7 +32,12 @@ private:
 	struct FItemContainer
 	{
 		UItemDataAsset& Item;
-		int16 Count;
+		uint16 Count;
+
+		bool operator == (const FItemContainer& Other) const
+		{
+			return Other.Item.GetName() == this->Item.GetName();
+		}
 	};
 
 	UPROPERTY(EditAnywhere)

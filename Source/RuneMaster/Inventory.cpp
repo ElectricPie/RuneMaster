@@ -29,32 +29,32 @@ void UInventory::BeginPlay()
 	
 	FItemContainer DebugItemOne = {
 		*DebugItemDAOne, // Item
-		50 // Count
+		100 // Count
 	};
 
 	FItemContainer DebugItemTwo = {
-		*DebugItemDATwo, // Item
-		20 // Count
+		*DebugItemDAOne, // Item
+		52 // Count
 	};
 
 	FItemContainer* SwappedItemOne = SwapItem(&DebugItemOne, 1);
 	if (SwappedItemOne)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Returned %i of %s"), SwappedItemOne->Count, *SwappedItemOne->Item.GetItemName());
+		UE_LOG(LogTemp, Warning, TEXT("1: Returned %i of %s"), SwappedItemOne->Count, *SwappedItemOne->Item.GetItemName());
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Item 1 No items returned"));
+		UE_LOG(LogTemp, Warning, TEXT("1: Item 1 No items returned"));
 	}
 	
 	FItemContainer* SwappedItemTwo = SwapItem(&DebugItemTwo, 1);
 	if (SwappedItemTwo)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Returned %i of %s"), SwappedItemTwo->Count, *SwappedItemTwo->Item.GetItemName());
+		UE_LOG(LogTemp, Warning, TEXT("2: Returned %i of %s"), SwappedItemTwo->Count, *SwappedItemTwo->Item.GetItemName());
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Item 2 No items returned"));
+		UE_LOG(LogTemp, Warning, TEXT("2: Item 2 No items returned"));
 	}
 }
 
@@ -69,18 +69,59 @@ void UInventory::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompo
 
 UInventory::FItemContainer* UInventory::SwapItem(FItemContainer* ItemContainer, int16 SlotIndex)
 {
+	FItemContainer* ReturnContainer = nullptr;
+	
 	// Prevent values outside of the inventory size
 	SlotIndex = FMath::Clamp(SlotIndex, 0, InventorySlotCount);
 
-	if (ItemStacks[SlotIndex] == nullptr)
+	FItemContainer* ItemInSlot = ItemStacks[SlotIndex];
+	
+	// Empty slot or emp
+	if (!ItemInSlot)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Empty"));
 		ItemStacks[SlotIndex] = ItemContainer;
 		return nullptr;
 	}
 
-	// TODO: Implement adding to stack when swapping with same items
+	// TODO: Implement replacing with nothing
+	// Temp solution for replacing slot with nothing
+	if (!ItemInSlot)
+	{
+		return nullptr;
+	}
 
-	FItemContainer* ReturnContainer = ItemStacks[SlotIndex];
+	// Combine item stacks if of the same types
+	if (*ItemInSlot == *ItemContainer)
+	{
+		// TODO: Prevent any possible underflow's
+		const uint16 StackFreeSpace = ItemInSlot->Item.GetStackSize() - ItemInSlot->Count;
+		
+		// Send back the items if the slot is full
+		if (StackFreeSpace <= 0)
+		{
+			return ItemContainer;
+		}
+		
+		// Add only what will fit to the stack and return the rest
+		if (StackFreeSpace < ItemContainer->Count)
+		{
+			const uint16 Overfill = ItemContainer->Count - StackFreeSpace;
+			ItemStacks[SlotIndex]->Count = ItemInSlot->Item.GetStackSize();
+			ReturnContainer = new FItemContainer {
+				ItemInSlot->Item, // Item
+				Overfill // Count
+			};
+			return ReturnContainer;
+		}
+		
+		// Added all items to stack
+		ItemInSlot->Count += ItemContainer->Count;
+		return nullptr;
+	}
+
+	// Swap the items
+	ReturnContainer = ItemStacks[SlotIndex];
 	ItemStacks[SlotIndex] = ItemContainer;
 	return ReturnContainer;
 }
