@@ -38,15 +38,19 @@ private:
 	uint16 InventorySlotCount = 20;
 	
 	UPROPERTY(EditAnywhere)
-	UItemDataAsset* DebugItem;
+	UItemDataAsset* DebugItemDAOne;
+	UPROPERTY(EditAnywhere)
+	UItemDataAsset* DebugItemDATwo;
 	
-	TArray<FItemContainer> ItemStacks;
+	TArray<FItemContainer*> ItemStacks;
 
 public:
 	/**
-	 * Attempts to add the item to the inventory
-	 * @param ItemContainer 
-	 * @return 
+	 * Swaps the ItemContainer with the items in the slot.
+	 * @param ItemContainer The item to be swapped.
+	 * @param SlotIndex The slot in the inventory to be swapped with.
+	 * @return Returns item at the slot, can be a nullptr. If the same item is in the slot already then it increases the
+	 * inventories item count and return an ItemContainer with a count that would not fit in the inventories container.
 	 */
-	bool AddItem(FItemContainer& ItemContainer);
+	FItemContainer* SwapItem(FItemContainer* ItemContainer, int16 SlotIndex);
 };

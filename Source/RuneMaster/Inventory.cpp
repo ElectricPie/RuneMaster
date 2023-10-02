@@ -22,22 +22,40 @@ void UInventory::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	ItemStacks = TArray<FItemContainer>();
+	ItemStacks = TArray<FItemContainer*>();
+	ItemStacks.Init(nullptr, InventorySlotCount);
 	
-	if (!DebugItem) return;
+	if (!DebugItemDAOne || !DebugItemDATwo) return;
 	
 	FItemContainer DebugItemOne = {
-		*DebugItem, // Item
+		*DebugItemDAOne, // Item
 		50 // Count
 	};
 
 	FItemContainer DebugItemTwo = {
-		*DebugItem, // Item
+		*DebugItemDATwo, // Item
 		20 // Count
 	};
 
-	AddItem(DebugItemOne);
-	AddItem(DebugItemTwo);
+	FItemContainer* SwappedItemOne = SwapItem(&DebugItemOne, 1);
+	if (SwappedItemOne)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Returned %i of %s"), SwappedItemOne->Count, *SwappedItemOne->Item.GetItemName());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Item 1 No items returned"));
+	}
+	
+	FItemContainer* SwappedItemTwo = SwapItem(&DebugItemTwo, 1);
+	if (SwappedItemTwo)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Returned %i of %s"), SwappedItemTwo->Count, *SwappedItemTwo->Item.GetItemName());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Item 2 No items returned"));
+	}
 }
 
 
@@ -49,24 +67,20 @@ void UInventory::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompo
 	// ...
 }
 
-bool UInventory::AddItem(FItemContainer& ItemContainer)
+UInventory::FItemContainer* UInventory::SwapItem(FItemContainer* ItemContainer, int16 SlotIndex)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Boop"));
+	// Prevent values outside of the inventory size
+	SlotIndex = FMath::Clamp(SlotIndex, 0, InventorySlotCount);
 
-	// Predicate to check if the item is already in the inventory
-	auto Predicate = [&ItemContainer](const FItemContainer& ArrayItem)
+	if (ItemStacks[SlotIndex] == nullptr)
 	{
-		return ArrayItem.Item.GetName() == ItemContainer.Item.GetName();
-	};
+		ItemStacks[SlotIndex] = ItemContainer;
+		return nullptr;
+	}
 
-	if (ItemStacks.ContainsByPredicate(Predicate))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Item %s is in inventory"), *ItemContainer.Item.GetItemName());
-	}
-	else
-	{
-		ItemStacks.Add(ItemContainer);
-	}
-	
-	return false;
+	// TODO: Implement adding to stack when swapping with same items
+
+	FItemContainer* ReturnContainer = ItemStacks[SlotIndex];
+	ItemStacks[SlotIndex] = ItemContainer;
+	return ReturnContainer;
 }
