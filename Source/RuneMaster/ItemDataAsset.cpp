@@ -3,7 +3,7 @@
 
 #include "ItemDataAsset.h"
 
-FString UItemDataAsset::GetItemName()
+FString UItemDataAsset::GetItemName() const
 {
 	return ItemName;
 }
@@ -11,4 +11,9 @@ FString UItemDataAsset::GetItemName()
 UTexture2D* UItemDataAsset::GetItemImage() const
 {
 	return ItemImage;
+}
+
+uint16 UItemDataAsset::GetStackSize() const
+{
+	return ItemStackSize;
 }

@@ -22,9 +22,22 @@ void UInventory::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
+	ItemStacks = TArray<FItemContainer>();
+	
 	if (!DebugItem) return;
 	
-	UE_LOG(LogTemp, Warning, TEXT("Debug Item: %s"), *DebugItem->GetItemName())
+	FItemContainer DebugItemOne = {
+		*DebugItem, // Item
+		50 // Count
+	};
+
+	FItemContainer DebugItemTwo = {
+		*DebugItem, // Item
+		20 // Count
+	};
+
+	AddItem(DebugItemOne);
+	AddItem(DebugItemTwo);
 }
 
 
@@ -36,3 +49,24 @@ void UInventory::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompo
 	// ...
 }
 
+bool UInventory::AddItem(FItemContainer& ItemContainer)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Boop"));
+
+	// Predicate to check if the item is already in the inventory
+	auto Predicate = [&ItemContainer](const FItemContainer& ArrayItem)
+	{
+		return ArrayItem.Item.GetName() == ItemContainer.Item.GetName();
+	};
+
+	if (ItemStacks.ContainsByPredicate(Predicate))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Item %s is in inventory"), *ItemContainer.Item.GetItemName());
+	}
+	else
+	{
+		ItemStacks.Add(ItemContainer);
+	}
+	
+	return false;
+}

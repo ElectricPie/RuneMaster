@@ -15,13 +15,15 @@ class RUNEMASTER_API UItemDataAsset : public UDataAsset
 	GENERATED_BODY()
 
 public:
-	FString GetItemName();
+	FString GetItemName() const;
 	UTexture2D* GetItemImage() const;
+	uint16 GetStackSize() const;
 	
 private:
 	UPROPERTY(EditDefaultsOnly)
 	FString ItemName;
-
 	UPROPERTY(EditDefaultsOnly)
 	UTexture2D* ItemImage;
+	UPROPERTY(EditDefaultsOnly)
+	uint16 ItemStackSize = 100;
 };

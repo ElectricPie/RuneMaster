@@ -27,6 +27,26 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
+	// Will probably need to move this to its own class
+	struct FItemContainer
+	{
+		UItemDataAsset& Item;
+		int16 Count;
+	};
+
+	UPROPERTY(EditAnywhere)
+	uint16 InventorySlotCount = 20;
+	
 	UPROPERTY(EditAnywhere)
 	UItemDataAsset* DebugItem;
+	
+	TArray<FItemContainer> ItemStacks;
+
+public:
+	/**
+	 * Attempts to add the item to the inventory
+	 * @param ItemContainer 
+	 * @return 
+	 */
+	bool AddItem(FItemContainer& ItemContainer);
 };
