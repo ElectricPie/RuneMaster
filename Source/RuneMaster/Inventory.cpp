@@ -29,7 +29,7 @@ void UInventory::BeginPlay()
 	
 	FItemContainer DebugItemOne = {
 		*DebugItemDAOne, // Item
-		100 // Count
+		1000 // Count
 	};
 
 	FItemContainer DebugItemTwo = {
@@ -94,8 +94,12 @@ UInventory::FItemContainer* UInventory::SwapItem(FItemContainer* ItemContainer, 
 	// Combine item stacks if of the same types
 	if (*ItemInSlot == *ItemContainer)
 	{
-		// TODO: Prevent any possible underflow's
-		const uint16 StackFreeSpace = ItemInSlot->Item.GetStackSize() - ItemInSlot->Count;
+		// Prevent underflow
+		uint16 StackFreeSpace = 0;
+		if (ItemInSlot->Count < ItemInSlot->Item.GetStackSize())
+		{
+			StackFreeSpace = ItemInSlot->Item.GetStackSize() - ItemInSlot->Count;
+		}
 		
 		// Send back the items if the slot is full
 		if (StackFreeSpace <= 0)
