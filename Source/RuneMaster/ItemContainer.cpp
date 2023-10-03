@@ -36,6 +36,6 @@ uint16 FItemContainer::GetItemMaxStackSize() const
 
 bool FItemContainer::operator==(const FItemContainer& Other) const
 {
-	// Use the name of the Data Asset 
+	// Use the name of the Data Asset as they shouldn't have duplicates
 	return this->Item.GetName() == Other.Item.GetName();
 }

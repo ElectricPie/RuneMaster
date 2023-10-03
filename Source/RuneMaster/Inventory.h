@@ -41,12 +41,17 @@ private:
 public:
 	/**
 	 * Swaps the ItemContainer with the items in the slot.
-	 * @param ItemContainer The item to be swapped.
+	 * @param ItemContainer The item to be swapped, can be nullptr.
 	 * @param SlotIndex The slot in the inventory to be swapped with.
 	 * @return Returns item at the slot, can be a nullptr. If the same item is in the slot already then it increases the
 	 * inventories item count and return an ItemContainer with a count that would not fit in the inventories container.
 	 */
 	TSharedPtr<FItemContainer> SwapItem(TSharedPtr<FItemContainer> ItemContainer, uint16 SlotIndex);
-
-	TSharedPtr<const FItemContainer> PeakItem(int16 SlotIndex);
+	
+	/**
+	 * Gets the item in the requested slot
+	 * @param SlotIndex The index of the slot to peek
+	 * @return The item container at the slot, can be nullptr
+	 */
+	TSharedPtr<const FItemContainer> PeekItem(uint16 SlotIndex);
 };

@@ -22,18 +22,20 @@ void UInventory::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
+	// Setup the inventory
 	ItemStacks = TArray<TSharedPtr<FItemContainer>>();
 	for (int32 i = 0; i < InventorySlotCount; i++)
 	{
 		ItemStacks.Add(nullptr);
 	}
-	
+
+	// TODO: Remove once UI is implemented
 	if (!DebugItemDAOne || !DebugItemDATwo) return;
 
 	TSharedPtr<FItemContainer> DebugItemOne = MakeShareable<FItemContainer>(new FItemContainer {*DebugItemDAOne, 97});
 	TSharedPtr<FItemContainer> DebugItemTwo = MakeShareable<FItemContainer>(new FItemContainer {*DebugItemDATwo, 20});
 
-	const TSharedPtr<const FItemContainer> DebugPeekZero = PeakItem(1);
+	const TSharedPtr<const FItemContainer> DebugPeekZero = PeekItem(1);
 	if (DebugPeekZero.IsValid())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Peak 0: %i of %s"), DebugPeekZero.Get()->Count, *DebugPeekZero.Get()->GetItemName());
@@ -52,7 +54,7 @@ void UInventory::BeginPlay()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("1: Item 1 No items returned"));
 	}
-	TSharedPtr<const FItemContainer> DebugPeekOne = PeakItem(1);
+	TSharedPtr<const FItemContainer> DebugPeekOne = PeekItem(1);
 	if (DebugPeekOne.IsValid())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Peak 1: %i of %s"), DebugPeekOne.Get()->Count, *DebugPeekOne.Get()->GetItemName());
@@ -71,7 +73,7 @@ void UInventory::BeginPlay()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("2: Item 2 No items returned"));
 	}
-	TSharedPtr<const FItemContainer> DebugPeekTwo = PeakItem(1);
+	TSharedPtr<const FItemContainer> DebugPeekTwo = PeekItem(1);
 	if (DebugPeekTwo.IsValid())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Peak 2: %i of %s"), DebugPeekTwo.Get()->Count, *DebugPeekTwo.Get()->GetItemName());
@@ -136,7 +138,7 @@ TSharedPtr<FItemContainer> UInventory::SwapItem(TSharedPtr<FItemContainer> ItemC
 	return ItemInSlot;
 }
 
-TSharedPtr<const FItemContainer> UInventory::PeakItem(const int16 SlotIndex)
+TSharedPtr<const FItemContainer> UInventory::PeekItem(const uint16 SlotIndex)
 {
 	return ItemStacks[SlotIndex];
 }

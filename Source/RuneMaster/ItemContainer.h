@@ -18,7 +18,7 @@ public:
 
 	FItemContainer(UItemDataAsset& ItemDataAsset, const uint16 ItemCount);
 	~FItemContainer();
-
+	
 	UItemDataAsset& GetItem() const;
 	FString GetItemName() const;
 	UTexture2D* GetItemImage() const;
