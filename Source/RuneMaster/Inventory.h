@@ -48,5 +48,5 @@ public:
 	 */
 	TSharedRef<FItemContainer> SwapItem(TSharedRef<FItemContainer> ItemContainer, int16 SlotIndex);
 
-	TWeakPtr<const FItemContainer> PeakItem(int16 SlotIndex);
+	TSharedRef<const FItemContainer> PeakItem(int16 SlotIndex);
 };

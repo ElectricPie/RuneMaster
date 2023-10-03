@@ -17,4 +17,6 @@ struct RUNEMASTER_API FItemContainer
 	~FItemContainer();
 	
 	bool operator==(const FItemContainer& Other) const;
+
+	explicit operator bool() const;
 };

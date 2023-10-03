@@ -35,11 +35,11 @@ void UInventory::BeginPlay()
 	TSharedRef<FItemContainer> DebugItemTwo = MakeShared<FItemContainer>(DebugItemDAOne, 20);
 	TSharedRef<FItemContainer> DebugEmptyOne = MakeShared<FItemContainer>(nullptr, 0);
 	TSharedRef<FItemContainer> DebugEmptyTwo = MakeShared<FItemContainer>(nullptr, 0);
-	
-	const TWeakPtr<const FItemContainer> DebugPeekZero = PeakItem(1);
-	if (DebugPeekZero.Pin()->Item)
+
+	const TSharedRef<const FItemContainer> DebugPeekZero = PeakItem(1);
+	if (DebugPeekZero.Get())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Peak 0: %i of %s"), DebugPeekZero.Pin()->Count, *DebugPeekZero.Pin()->Item->GetItemName());
+		UE_LOG(LogTemp, Warning, TEXT("Peak 0: %i of %s"), DebugPeekZero.Get().Count, *DebugPeekZero.Get().Item->GetItemName());
 	}
 	else
 	{
@@ -55,8 +55,8 @@ void UInventory::BeginPlay()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("1: Item 1 No items returned"));
 	}
-	TWeakPtr<const FItemContainer> DebugPeekOne = PeakItem(1);
-	UE_LOG(LogTemp, Warning, TEXT("Peak 1: %i of %s"), DebugPeekOne.Pin()->Count, *DebugPeekOne.Pin()->Item->GetItemName());
+	TSharedRef<const FItemContainer> DebugPeekOne = PeakItem(1);
+	UE_LOG(LogTemp, Warning, TEXT("Peak 1: %i of %s"), DebugPeekOne.Get().Count, *DebugPeekOne.Get().Item->GetItemName());
 	
 	TSharedRef<FItemContainer> SwappedItemTwo = SwapItem(DebugItemTwo, 1);
 	if (SwappedItemTwo->Item)
@@ -67,8 +67,8 @@ void UInventory::BeginPlay()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("2: Item 2 No items returned"));
 	}
-	TWeakPtr<const FItemContainer> DebugPeekTwo = PeakItem(1);
-	UE_LOG(LogTemp, Warning, TEXT("Peak 2: %i of %s"), DebugPeekTwo.Pin()->Count, *DebugPeekTwo.Pin()->Item->GetItemName());
+	TSharedRef<const FItemContainer> DebugPeekTwo = PeakItem(1);
+	UE_LOG(LogTemp, Warning, TEXT("Peak 2: %i of %s"), DebugPeekTwo.Get().Count, *DebugPeekTwo.Get().Item->GetItemName());
 }
 
 
@@ -122,7 +122,7 @@ TSharedRef<FItemContainer> UInventory::SwapItem(TSharedRef<FItemContainer> ItemC
 	return ItemInSlot;
 }
 
-TWeakPtr<const FItemContainer> UInventory::PeakItem(const int16 SlotIndex)
+TSharedRef<const FItemContainer> UInventory::PeakItem(const int16 SlotIndex)
 {
 	return ItemStacks[SlotIndex];
 }

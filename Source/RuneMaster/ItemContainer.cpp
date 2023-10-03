@@ -21,3 +21,14 @@ bool FItemContainer::operator==(const FItemContainer& Other) const
 	// Use the name of the Data Asset 
 	return this->Item->GetName() == Other.Item->GetName();
 }
+
+FItemContainer::operator bool() const
+{
+	UE_LOG(LogTemp, Warning, TEXT("Boop"));
+	if (Item)
+	{
+		return true;
+	}
+
+	return false;
+}
