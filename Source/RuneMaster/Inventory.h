@@ -3,12 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ItemDataAsset.h"
 #include "Components/ActorComponent.h"
 #include "Inventory.generated.h"
 
 
 class UItemDataAsset;
+struct FItemContainer;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class RUNEMASTER_API UInventory : public UActorComponent
@@ -28,27 +28,6 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
-	// Will probably need to move this to its own class
-	struct FItemContainer
-	{
-		UItemDataAsset* Item = nullptr;
-		uint16 Count = 0;
-
-		FItemContainer(UItemDataAsset* ItemDataAsset, uint16 ItemCount)
-		{
-			Item = ItemDataAsset;
-			Count = ItemCount;
-		}
-
-		bool operator==(const FItemContainer& Other) const
-		{
-			if (!Item || !Other.Item) return false;
-
-			// Use the name of the Data Asset 
-			return Other.Item->GetName() == this->Item->GetName();
-		}
-	};
-
 	UPROPERTY(EditAnywhere)
 	uint16 InventorySlotCount = 20;
 	

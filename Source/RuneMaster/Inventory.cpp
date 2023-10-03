@@ -2,7 +2,7 @@
 
 
 #include "Inventory.h"
-
+#include "ItemContainer.h"
 #include "ItemDataAsset.h"
 
 // Sets default values for this component's properties
@@ -31,8 +31,8 @@ void UInventory::BeginPlay()
 	
 	if (!DebugItemDAOne || !DebugItemDATwo) return;
 
-	TSharedRef<FItemContainer> DebugItemOne = MakeShared<FItemContainer>(DebugItemDAOne, 57);
-	TSharedRef<FItemContainer> DebugItemTwo = MakeShared<FItemContainer>(DebugItemDAOne, 20);
+	TSharedRef<FItemContainer> DebugItemOne = MakeShared<FItemContainer>(DebugItemDAOne, 97);
+	TSharedRef<FItemContainer> DebugItemTwo = MakeShared<FItemContainer>(DebugItemDATwo, 20);
 	TSharedRef<FItemContainer> DebugEmptyOne = MakeShared<FItemContainer>(nullptr, 0);
 	TSharedRef<FItemContainer> DebugEmptyTwo = MakeShared<FItemContainer>(nullptr, 0);
 	
@@ -66,7 +66,7 @@ void UInventory::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompo
 	// ...
 }
 
-TSharedRef<UInventory::FItemContainer> UInventory::SwapItem(TSharedRef<FItemContainer> ItemContainer, int16 SlotIndex)
+TSharedRef<FItemContainer> UInventory::SwapItem(TSharedRef<FItemContainer> ItemContainer, int16 SlotIndex)
 {
 	// Prevent values outside of the inventory size
 	SlotIndex = FMath::Clamp(SlotIndex, 0, InventorySlotCount);
