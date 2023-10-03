@@ -28,13 +28,13 @@ void UInventory::BeginPlay()
 		TSharedRef<FItemContainer> NewItemContainer = MakeShared<FItemContainer>(nullptr, 0);
 		ItemStacks.Add(NewItemContainer);
 	}
-
 	
 	if (!DebugItemDAOne || !DebugItemDATwo) return;
 
-	TSharedRef<FItemContainer> DebugItemOne = MakeShared<FItemContainer>(DebugItemDAOne, 97);
-	TSharedRef<FItemContainer> DebugItemTwo = MakeShared<FItemContainer>(DebugItemDATwo, 20);
-	TSharedRef<FItemContainer> DebugEmpty = MakeShared<FItemContainer>(nullptr, 0);
+	TSharedRef<FItemContainer> DebugItemOne = MakeShared<FItemContainer>(DebugItemDAOne, 57);
+	TSharedRef<FItemContainer> DebugItemTwo = MakeShared<FItemContainer>(DebugItemDAOne, 20);
+	TSharedRef<FItemContainer> DebugEmptyOne = MakeShared<FItemContainer>(nullptr, 0);
+	TSharedRef<FItemContainer> DebugEmptyTwo = MakeShared<FItemContainer>(nullptr, 0);
 	
 	TSharedRef<FItemContainer> SwappedItemOne = SwapItem(DebugItemOne, 1);
 	if (SwappedItemOne->Item)
@@ -73,21 +73,6 @@ TSharedRef<UInventory::FItemContainer> UInventory::SwapItem(TSharedRef<FItemCont
 
 	TSharedRef<FItemContainer> ItemInSlot = ItemStacks[SlotIndex];
 	
-	// Empty slot
-	if (!ItemInSlot->Item)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Empty"));
-		ItemStacks[SlotIndex] = ItemContainer;
-		return ItemInSlot;
-	}
-
-	// TODO: Implement replacing with nothing
-	// Temp solution for replacing slot with nothing
-	if (!ItemContainer->Item)
-	{
-		return ItemContainer;
-	}
-
 	// Combine item stacks if of the same types
 	if (ItemInSlot.Get() == ItemContainer.Get())
 	{

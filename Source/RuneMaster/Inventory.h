@@ -43,7 +43,8 @@ private:
 		bool operator==(const FItemContainer& Other) const
 		{
 			if (!Item || !Other.Item) return false;
-			
+
+			// Use the name of the Data Asset 
 			return Other.Item->GetName() == this->Item->GetName();
 		}
 	};
