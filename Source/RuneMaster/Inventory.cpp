@@ -22,53 +22,64 @@ void UInventory::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	ItemStacks = TArray<TSharedRef<FItemContainer>>();
+	ItemStacks = TArray<TSharedPtr<FItemContainer>>();
 	for (int32 i = 0; i < InventorySlotCount; i++)
 	{
-		TSharedRef<FItemContainer> NewItemContainer = MakeShared<FItemContainer>(nullptr, 0);
-		ItemStacks.Add(NewItemContainer);
+		ItemStacks.Add(nullptr);
 	}
 	
 	if (!DebugItemDAOne || !DebugItemDATwo) return;
 
-	TSharedRef<FItemContainer> DebugItemOne = MakeShared<FItemContainer>(DebugItemDAOne, 97);
-	TSharedRef<FItemContainer> DebugItemTwo = MakeShared<FItemContainer>(DebugItemDAOne, 20);
-	TSharedRef<FItemContainer> DebugEmptyOne = MakeShared<FItemContainer>(nullptr, 0);
-	TSharedRef<FItemContainer> DebugEmptyTwo = MakeShared<FItemContainer>(nullptr, 0);
+	TSharedPtr<FItemContainer> DebugItemOne = MakeShareable<FItemContainer>(new FItemContainer {*DebugItemDAOne, 97});
+	TSharedPtr<FItemContainer> DebugItemTwo = MakeShareable<FItemContainer>(new FItemContainer {*DebugItemDATwo, 20});
 
-	const TSharedRef<const FItemContainer> DebugPeekZero = PeakItem(1);
-	if (DebugPeekZero.Get())
+	const TSharedPtr<const FItemContainer> DebugPeekZero = PeakItem(1);
+	if (DebugPeekZero.IsValid())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Peak 0: %i of %s"), DebugPeekZero.Get().Count, *DebugPeekZero.Get().Item->GetItemName());
+		UE_LOG(LogTemp, Warning, TEXT("Peak 0: %i of %s"), DebugPeekZero.Get()->Count, *DebugPeekZero.Get()->GetItemName());
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Peak 0: Empty"));
 	}
 	
-	TSharedRef<FItemContainer> SwappedItemOne = SwapItem(DebugItemOne, 1);
-	if (SwappedItemOne->Item)
+	TSharedPtr<FItemContainer> SwappedItemOne = SwapItem(DebugItemOne, 1);
+	if (SwappedItemOne.IsValid())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("1: Returned %i of %s"), SwappedItemOne->Count, *SwappedItemOne->Item->GetItemName());
+		UE_LOG(LogTemp, Warning, TEXT("1: Returned %i of %s"), SwappedItemOne->Count, *SwappedItemOne->GetItemName());
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("1: Item 1 No items returned"));
 	}
-	TSharedRef<const FItemContainer> DebugPeekOne = PeakItem(1);
-	UE_LOG(LogTemp, Warning, TEXT("Peak 1: %i of %s"), DebugPeekOne.Get().Count, *DebugPeekOne.Get().Item->GetItemName());
-	
-	TSharedRef<FItemContainer> SwappedItemTwo = SwapItem(DebugItemTwo, 1);
-	if (SwappedItemTwo->Item)
+	TSharedPtr<const FItemContainer> DebugPeekOne = PeakItem(1);
+	if (DebugPeekOne.IsValid())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("2: Returned %i of %s"), SwappedItemTwo->Count, *SwappedItemTwo->Item->GetItemName());
+		UE_LOG(LogTemp, Warning, TEXT("Peak 1: %i of %s"), DebugPeekOne.Get()->Count, *DebugPeekOne.Get()->GetItemName());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Peak 1: Empty"));
+	}
+	
+	TSharedPtr<FItemContainer> SwappedItemTwo = SwapItem(nullptr, 1);
+	if (SwappedItemTwo.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("2: Returned %i of %s"), SwappedItemTwo->Count, *SwappedItemTwo->GetItemName());
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("2: Item 2 No items returned"));
 	}
-	TSharedRef<const FItemContainer> DebugPeekTwo = PeakItem(1);
-	UE_LOG(LogTemp, Warning, TEXT("Peak 2: %i of %s"), DebugPeekTwo.Get().Count, *DebugPeekTwo.Get().Item->GetItemName());
+	TSharedPtr<const FItemContainer> DebugPeekTwo = PeakItem(1);
+	if (DebugPeekTwo.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Peak 2: %i of %s"), DebugPeekTwo.Get()->Count, *DebugPeekTwo.Get()->GetItemName());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Peak 2: Empty"));
+	}
 }
 
 
@@ -80,41 +91,44 @@ void UInventory::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompo
 	// ...
 }
 
-TSharedRef<FItemContainer> UInventory::SwapItem(TSharedRef<FItemContainer> ItemContainer, int16 SlotIndex)
+TSharedPtr<FItemContainer> UInventory::SwapItem(TSharedPtr<FItemContainer> ItemContainer, uint16 SlotIndex)
 {
 	// Prevent values outside of the inventory size
 	SlotIndex = FMath::Clamp(SlotIndex, 0, InventorySlotCount);
 
-	TSharedRef<FItemContainer> ItemInSlot = ItemStacks[SlotIndex];
-	
-	// Combine item stacks if of the same types
-	if (ItemInSlot.Get() == ItemContainer.Get())
+	TSharedPtr<FItemContainer> ItemInSlot = ItemStacks[SlotIndex];
+
+	if (ItemInSlot.IsValid() && ItemContainer.IsValid())
 	{
-		// Prevent underflow
-		uint16 StackFreeSpace = 0;
-		if (ItemInSlot->Count < ItemInSlot->Item->GetStackSize())
+		// Combine item stacks if of the same types
+		if (*ItemInSlot.Get() == *ItemContainer.Get())
 		{
-			StackFreeSpace = ItemInSlot->Item->GetStackSize() - ItemInSlot->Count;
-		}
+			// Prevent underflow
+			uint16 StackFreeSpace = 0;
+			if (ItemInSlot->Count < ItemInSlot->GetItemMaxStackSize())
+			{
+				StackFreeSpace = ItemInSlot->GetItemMaxStackSize() - ItemInSlot->Count;
+			}
 		
-		// Send back the items if the slot is full
-		if (StackFreeSpace <= 0)
-		{
-			return ItemContainer;
-		}
+			// Send back the items if the slot is full
+			if (StackFreeSpace <= 0)
+			{
+				return ItemContainer;
+			}
 		
-		// Add only what will fit to the stack and return the rest
-		if (StackFreeSpace < ItemContainer->Count)
-		{
-			const uint16 Overfill = ItemContainer->Count - StackFreeSpace;
-			ItemStacks[SlotIndex]->Count = ItemInSlot->Item->GetStackSize();
-			
-			return MakeShared<FItemContainer>(ItemInSlot->Item, Overfill);
-		}
+			// Add only what will fit to the stack and return the rest
+			if (StackFreeSpace < ItemContainer->Count)
+			{
+				const uint16 Overfill = ItemContainer->Count - StackFreeSpace;
+				ItemStacks[SlotIndex]->Count = ItemInSlot->GetItemMaxStackSize();
+
+				return MakeShareable<FItemContainer>(new FItemContainer{ItemInSlot->GetItem(), Overfill});
+			}
 		
-		// Added all items to stack
-		ItemInSlot->Count += ItemContainer->Count;
-		return MakeShared<FItemContainer>(nullptr, 0);
+			// Added all items to stack
+			ItemInSlot->Count += ItemContainer->Count;
+			return nullptr;
+		}
 	}
 
 	// Swap the items
@@ -122,7 +136,7 @@ TSharedRef<FItemContainer> UInventory::SwapItem(TSharedRef<FItemContainer> ItemC
 	return ItemInSlot;
 }
 
-TSharedRef<const FItemContainer> UInventory::PeakItem(const int16 SlotIndex)
+TSharedPtr<const FItemContainer> UInventory::PeakItem(const int16 SlotIndex)
 {
 	return ItemStacks[SlotIndex];
 }

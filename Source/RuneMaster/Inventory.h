@@ -36,7 +36,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	UItemDataAsset* DebugItemDATwo;
 	
-	TArray<TSharedRef<FItemContainer>> ItemStacks;
+	TArray<TSharedPtr<FItemContainer>> ItemStacks;
 
 public:
 	/**
@@ -46,7 +46,7 @@ public:
 	 * @return Returns item at the slot, can be a nullptr. If the same item is in the slot already then it increases the
 	 * inventories item count and return an ItemContainer with a count that would not fit in the inventories container.
 	 */
-	TSharedRef<FItemContainer> SwapItem(TSharedRef<FItemContainer> ItemContainer, int16 SlotIndex);
+	TSharedPtr<FItemContainer> SwapItem(TSharedPtr<FItemContainer> ItemContainer, uint16 SlotIndex);
 
-	TSharedRef<const FItemContainer> PeakItem(int16 SlotIndex);
+	TSharedPtr<const FItemContainer> PeakItem(int16 SlotIndex);
 };

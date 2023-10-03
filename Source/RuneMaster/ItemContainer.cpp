@@ -4,9 +4,8 @@
 #include "ItemContainer.h"
 #include "ItemDataAsset.h"
 
-FItemContainer::FItemContainer(UItemDataAsset* ItemDataAsset, const uint16 ItemCount)
+FItemContainer::FItemContainer(UItemDataAsset& ItemDataAsset, const uint16 ItemCount) : Item(ItemDataAsset)
 {
-	Item = ItemDataAsset;
 	Count = ItemCount;
 }
 
@@ -14,21 +13,29 @@ FItemContainer::~FItemContainer()
 {
 }
 
-bool FItemContainer::operator==(const FItemContainer& Other) const
+UItemDataAsset& FItemContainer::GetItem() const
 {
-	if (!Item || !Other.Item) return false;
-
-	// Use the name of the Data Asset 
-	return this->Item->GetName() == Other.Item->GetName();
+	return Item;
 }
 
-FItemContainer::operator bool() const
+FString FItemContainer::GetItemName() const
 {
-	UE_LOG(LogTemp, Warning, TEXT("Boop"));
-	if (Item)
-	{
-		return true;
-	}
+	return Item.GetItemName();
+}
 
-	return false;
+UTexture2D* FItemContainer::GetItemImage() const
+{
+	return Item.GetItemImage();
+}
+
+uint16 FItemContainer::GetItemMaxStackSize() const
+{
+	return Item.GetStackSize();
+}
+
+
+bool FItemContainer::operator==(const FItemContainer& Other) const
+{
+	// Use the name of the Data Asset 
+	return this->Item.GetName() == Other.Item.GetName();
 }

@@ -10,13 +10,19 @@ class UItemDataAsset;
  */
 struct RUNEMASTER_API FItemContainer
 {
-	UItemDataAsset* Item = nullptr;
+private:
+	UItemDataAsset& Item;
+
+public:
 	uint16 Count = 0;
 
-	FItemContainer(UItemDataAsset* ItemDataAsset, const uint16 ItemCount);
+	FItemContainer(UItemDataAsset& ItemDataAsset, const uint16 ItemCount);
 	~FItemContainer();
+
+	UItemDataAsset& GetItem() const;
+	FString GetItemName() const;
+	UTexture2D* GetItemImage() const;
+	uint16 GetItemMaxStackSize() const;
 	
 	bool operator==(const FItemContainer& Other) const;
-
-	explicit operator bool() const;
 };
