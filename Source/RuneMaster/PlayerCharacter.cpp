@@ -7,6 +7,7 @@
 #include "Components/InputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "Inventory.h"
 #include "GameFramework/SpringArmComponent.h"
 
 // Sets default values
@@ -20,6 +21,8 @@ APlayerCharacter::APlayerCharacter()
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
+
+	InventoryComponent = CreateDefaultSubobject<UInventory>(TEXT("Inventory"));
 }
 
 // Called when the game starts or when spawned

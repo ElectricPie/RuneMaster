@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 #include "PlayerCharacter.generated.h"
 
+class UInventory;
 class UCameraComponent;
 class USpringArmComponent;
 class UInputMappingContext;
@@ -47,6 +48,9 @@ protected:
 	UInputAction* MoveInputAction;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
 	UInputAction* ZoomInputAction;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Components")
+	UInventory* InventoryComponent;
 	
 	void Move(const FInputActionValue& Value);
 	void Zoom(const FInputActionValue& Value);
