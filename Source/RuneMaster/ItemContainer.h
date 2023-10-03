@@ -10,7 +10,6 @@ class UItemDataAsset;
  */
 struct RUNEMASTER_API FItemContainer
 {
-public:
 	UItemDataAsset* Item = nullptr;
 	uint16 Count = 0;
 

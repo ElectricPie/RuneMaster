@@ -47,4 +47,6 @@ public:
 	 * inventories item count and return an ItemContainer with a count that would not fit in the inventories container.
 	 */
 	TSharedRef<FItemContainer> SwapItem(TSharedRef<FItemContainer> ItemContainer, int16 SlotIndex);
+
+	TWeakPtr<const FItemContainer> PeakItem(int16 SlotIndex);
 };
