@@ -4,11 +4,14 @@
 #include "Ui/GameHud.h"
 
 #include "GameHudWidget.h"
+#include "PlayerInventoryUi.h"
+#include "RuneMaster/Inventory.h"
 
 void AGameHud::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Setup player widgets
 	if (HudWidgetClass != nullptr)
 	{
 		HudWidgetInstance = CreateWidget<UGameHudWidget>(GetOwningPlayerController(), HudWidgetClass);
@@ -17,5 +20,11 @@ void AGameHud::BeginPlay()
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("Game Hud is missing HudWidgetClass"));
+		return;
+	}
+
+	if (const UInventory* PlayerInventory = GetOwningPawn()->GetComponentByClass<UInventory>())
+	{
+		HudWidgetInstance->GetInventoryUi()->FillGrid(PlayerInventory->GetSlotCount());
 	}
 }

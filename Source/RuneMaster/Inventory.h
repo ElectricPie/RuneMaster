@@ -19,6 +19,8 @@ public:
 	// Sets default values for this component's properties
 	UInventory();
 
+	int32 GetSlotCount() const { return InventorySlotCount; }
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -28,8 +30,8 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
-	UPROPERTY(EditAnywhere)
-	uint16 InventorySlotCount = 20;
+	UPROPERTY(EditAnywhere, meta=(ClampMin=1, UIMin=1))
+	int32 InventorySlotCount = 20;
 	
 	UPROPERTY(EditAnywhere)
 	UItemDataAsset* DebugItemDAOne;
