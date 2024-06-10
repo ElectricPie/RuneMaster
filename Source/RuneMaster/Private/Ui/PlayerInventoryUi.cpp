@@ -20,9 +20,7 @@ void UPlayerInventoryUi::FillGrid(const int32 InventorySlots)
 	while (SlotCount < InventorySlots)
 	{
 		UUserWidget* NewSlot = CreateWidget(this, InventorySlotWidget);
-		UUniformGridSlot* NewGridSlot = Cast<UUniformGridSlot>(InventoryGridPanel->AddChild(NewSlot));
-		NewGridSlot->SetColumn(Columns);
-		NewGridSlot->SetRow(Rows);
+		UUniformGridSlot* NewGridSlot = InventoryGridPanel->AddChildToUniformGrid(NewSlot, Rows, Columns);
 		NewGridSlot->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Fill);
 		NewGridSlot->SetVerticalAlignment(EVerticalAlignment::VAlign_Fill);
 		SlotCount++;
