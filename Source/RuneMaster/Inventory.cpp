@@ -30,58 +30,58 @@ void UInventory::BeginPlay()
 	}
 
 	// TODO: Remove once UI is implemented
-	if (!DebugItemDAOne || !DebugItemDATwo) return;
-
-	TSharedPtr<FItemContainer> DebugItemOne = MakeShareable<FItemContainer>(new FItemContainer {*DebugItemDAOne, 97});
-	TSharedPtr<FItemContainer> DebugItemTwo = MakeShareable<FItemContainer>(new FItemContainer {*DebugItemDATwo, 20});
-
-	const TSharedPtr<const FItemContainer> DebugPeekZero = PeekItem(1);
-	if (DebugPeekZero.IsValid())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Peak 0: %i of %s"), DebugPeekZero.Get()->Count, *DebugPeekZero.Get()->GetItemName());
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Peak 0: Empty"));
-	}
-	
-	TSharedPtr<FItemContainer> SwappedItemOne = SwapItem(DebugItemOne, 1);
-	if (SwappedItemOne.IsValid())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("1: Returned %i of %s"), SwappedItemOne->Count, *SwappedItemOne->GetItemName());
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("1: Item 1 No items returned"));
-	}
-	TSharedPtr<const FItemContainer> DebugPeekOne = PeekItem(1);
-	if (DebugPeekOne.IsValid())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Peak 1: %i of %s"), DebugPeekOne.Get()->Count, *DebugPeekOne.Get()->GetItemName());
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Peak 1: Empty"));
-	}
-	
-	TSharedPtr<FItemContainer> SwappedItemTwo = SwapItem(nullptr, 1);
-	if (SwappedItemTwo.IsValid())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("2: Returned %i of %s"), SwappedItemTwo->Count, *SwappedItemTwo->GetItemName());
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("2: Item 2 No items returned"));
-	}
-	TSharedPtr<const FItemContainer> DebugPeekTwo = PeekItem(1);
-	if (DebugPeekTwo.IsValid())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Peak 2: %i of %s"), DebugPeekTwo.Get()->Count, *DebugPeekTwo.Get()->GetItemName());
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Peak 2: Empty"));
-	}
+	// if (!DebugItemDAOne || !DebugItemDATwo) return;
+	//
+	// TSharedPtr<FItemContainer> DebugItemOne = MakeShareable<FItemContainer>(new FItemContainer {*DebugItemDAOne, 97});
+	// TSharedPtr<FItemContainer> DebugItemTwo = MakeShareable<FItemContainer>(new FItemContainer {*DebugItemDATwo, 20});
+	//
+	// const TSharedPtr<const FItemContainer> DebugPeekZero = PeekItem(1);
+	// if (DebugPeekZero.IsValid())
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("Peak 0: %i of %s"), DebugPeekZero.Get()->Count, *DebugPeekZero.Get()->GetItemName());
+	// }
+	// else
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("Peak 0: Empty"));
+	// }
+	//
+	// TSharedPtr<FItemContainer> SwappedItemOne = SwapItem(DebugItemOne, 1);
+	// if (SwappedItemOne.IsValid())
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("1: Returned %i of %s"), SwappedItemOne->Count, *SwappedItemOne->GetItemName());
+	// }
+	// else
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("1: Item 1 No items returned"));
+	// }
+	// TSharedPtr<const FItemContainer> DebugPeekOne = PeekItem(1);
+	// if (DebugPeekOne.IsValid())
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("Peak 1: %i of %s"), DebugPeekOne.Get()->Count, *DebugPeekOne.Get()->GetItemName());
+	// }
+	// else
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("Peak 1: Empty"));
+	// }
+	//
+	// TSharedPtr<FItemContainer> SwappedItemTwo = SwapItem(nullptr, 1);
+	// if (SwappedItemTwo.IsValid())
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("2: Returned %i of %s"), SwappedItemTwo->Count, *SwappedItemTwo->GetItemName());
+	// }
+	// else
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("2: Item 2 No items returned"));
+	// }
+	// TSharedPtr<const FItemContainer> DebugPeekTwo = PeekItem(1);
+	// if (DebugPeekTwo.IsValid())
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("Peak 2: %i of %s"), DebugPeekTwo.Get()->Count, *DebugPeekTwo.Get()->GetItemName());
+	// }
+	// else
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("Peak 2: Empty"));
+	// }
 }
 
 
