@@ -4,7 +4,7 @@
 #include "Ui/GameHud.h"
 
 #include "GameHudWidget.h"
-#include "PlayerInventoryUi.h"
+#include "InventoryUi.h"
 #include "RuneMaster/Inventory.h"
 
 void AGameHud::BeginPlay()
@@ -25,6 +25,6 @@ void AGameHud::BeginPlay()
 
 	if (const UInventory* PlayerInventory = GetOwningPawn()->GetComponentByClass<UInventory>())
 	{
-		HudWidgetInstance->GetInventoryUi()->FillGrid(PlayerInventory->GetSlotCount());
+		HudWidgetInstance->SetupInventoryGrid(PlayerInventory);
 	}
 }

@@ -22,7 +22,7 @@ protected:
 private:
 	UPROPERTY(EditAnywhere, Category="Widgets")
 	TSubclassOf<UGameHudWidget> HudWidgetClass;
-
+	
 	UPROPERTY()
 	UGameHudWidget* HudWidgetInstance;
 };

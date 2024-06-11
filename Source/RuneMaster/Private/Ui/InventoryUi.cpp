@@ -1,12 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Ui/PlayerInventoryUi.h"
+#include "Ui/InventoryUi.h"
 
+#include "Components/ScrollBox.h"
+#include "Components/SizeBox.h"
 #include "Components/UniformGridPanel.h"
 #include "Components/UniformGridSlot.h"
 
-void UPlayerInventoryUi::FillGrid(const int32 InventorySlots)
+void UInventoryUi::FillGrid(const int32 InventorySlots, const FVector2D GridCanvasSize)
 {
 	if (InventorySlotWidget == nullptr)
 	{
@@ -14,38 +16,41 @@ void UPlayerInventoryUi::FillGrid(const int32 InventorySlots)
 		return;
 	}
 
-	// Dummy slot to set the width of other slot items
-	if (InventorySlots < SlotColumns)
+	// Dummy slot to set the width of other slot items if less than the column max
+	if (InventorySlots < MaxColumns)
 	{
 		UUserWidget* BlankSlot = CreateWidget(this, InventorySlotWidget);
-		UUniformGridSlot* EndGridSlot = InventoryGridPanel->AddChildToUniformGrid(BlankSlot, 0, SlotColumns - 1); 
+		UUniformGridSlot* EndGridSlot = InventoryGridPanel->AddChildToUniformGrid(BlankSlot, 0, MaxColumns - 1); 
 		EndGridSlot->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Fill);
 		EndGridSlot->SetVerticalAlignment(EVerticalAlignment::VAlign_Fill);
 		BlankSlot->SetVisibility(ESlateVisibility::Hidden);
 	}
-
+	
+	// Create the slots
 	int32 SlotCount = 0;
-	int32 Rows = 0;
-	int32 Columns = 0;
+	int32 Columns = 1;
+	Rows = 1;
 	while (SlotCount < InventorySlots)
 	{
 		UUserWidget* NewSlot = CreateWidget(this, InventorySlotWidget);
-		UUniformGridSlot* NewGridSlot = InventoryGridPanel->AddChildToUniformGrid(NewSlot, Rows, Columns);
+		UUniformGridSlot* NewGridSlot = InventoryGridPanel->AddChildToUniformGrid(NewSlot, Rows - 1, Columns - 1);
 		NewGridSlot->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Fill);
 		NewGridSlot->SetVerticalAlignment(EVerticalAlignment::VAlign_Fill);
 		SlotCount++;
 
 		// Move to the next row if the current one reach the column limit
-		if (SlotCount % SlotColumns == 0)
+		if (SlotCount % MaxColumns == 0)
 		{
 			Rows++;
-			Columns = 0;
+			Columns = 1;
 		}
 		else
 		{
 			Columns++;
 		}
 	}
-	
-	UE_LOG(LogTemp, Warning, TEXT("Total: %d, Rows: %d"), SlotCount, Rows);
+
+	// Set the size of height of the grid
+	const float CellSize = GridCanvasSize.X / MaxColumns;
+	GridSizeBox->SetHeightOverride(CellSize * Rows);
 }

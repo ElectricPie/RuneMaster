@@ -19,6 +19,7 @@ public:
 	// Sets default values for this component's properties
 	UInventory();
 
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 	int32 GetSlotCount() const { return InventorySlotCount; }
 
 protected:

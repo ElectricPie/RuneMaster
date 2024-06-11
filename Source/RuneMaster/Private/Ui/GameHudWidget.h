@@ -7,7 +7,7 @@
 #include "GameHudWidget.generated.h"
 
 class UInventory;
-class UPlayerInventoryUi;
+class UInventoryUi;
 /**
  * 
  */
@@ -17,9 +17,10 @@ class UGameHudWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	UPlayerInventoryUi* GetInventoryUi() const { return PlayerInventoryUi; }
+	UFUNCTION(BlueprintImplementableEvent)
+	void SetupInventoryGrid(const UInventory* Inventory);
 	
-private:
-	UPROPERTY(VisibleAnywhere, meta=(BindWidget))
-	UPlayerInventoryUi* PlayerInventoryUi;
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(BindWidget))
+	UInventoryUi* PlayerInventoryWidget;
 };
