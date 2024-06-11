@@ -3,19 +3,26 @@
 
 #include "Ui/InventoryUi.h"
 
-#include "Components/ScrollBox.h"
 #include "Components/SizeBox.h"
 #include "Components/UniformGridPanel.h"
 #include "Components/UniformGridSlot.h"
+#include "RuneMaster/Inventory.h"
 
-void UInventoryUi::FillGrid(const int32 InventorySlots, const FVector2D GridCanvasSize)
+void UInventoryUi::SetupInventory(UInventory* InventoryComponent, const FVector2D GridCanvasSize)
 {
 	if (InventorySlotWidget == nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("PlayerInventoryUI is missing InventoryGrid widget"));
+		UE_LOG(LogTemp, Error, TEXT("PlayerInventoryUI is missing InventoryGrid widget"));
+		return;
+	}
+	if (InventoryComponent == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Attempted to setup Inventory UI with null Inventory Component"));
 		return;
 	}
 
+	Inventory = InventoryComponent;
+	const int32 InventorySlots = Inventory->GetSlotCount();
 	// Dummy slot to set the width of other slot items if less than the column max
 	if (InventorySlots < MaxColumns)
 	{

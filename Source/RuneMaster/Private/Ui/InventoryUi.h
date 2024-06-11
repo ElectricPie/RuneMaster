@@ -6,9 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "InventoryUi.generated.h"
 
+class UInventory;
 class USizeBox;
-class UScrollBox;
-class UPlayerInventorySlot;
 class UUniformGridPanel;
 
 /**
@@ -21,11 +20,9 @@ class UInventoryUi : public UUserWidget
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void FillGrid(const int32 InventorySlots, const FVector2D GridCanvasSize);
-
+	void SetupInventory(UInventory* InventoryComponent, const FVector2D GridCanvasSize);
+	
 protected:
-	UPROPERTY(VisibleAnywhere, meta=(BindWidget))
-	UScrollBox* GridScrollBox;
 	UPROPERTY(VisibleAnywhere, meta=(BindWidget))
 	USizeBox* GridSizeBox;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(BindWidget))
@@ -37,4 +34,6 @@ private:
 	UPROPERTY(EditAnywhere, Category="Grid Slots")
 	int32 MaxColumns = 9;
 	int32 Rows = 0;
+
+	TWeakObjectPtr<UInventory> Inventory;
 };
