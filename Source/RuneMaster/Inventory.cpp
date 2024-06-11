@@ -3,7 +3,6 @@
 
 #include "Inventory.h"
 #include "ItemContainer.h"
-#include "ItemDataAsset.h"
 
 // Sets default values for this component's properties
 UInventory::UInventory()
