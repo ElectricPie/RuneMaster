@@ -83,9 +83,15 @@ int32 UInventory::AddItem(UItemDataAsset* DataAsset, int32 AmountToAdd)
 	}
 	else
 	{
+		if (UsedSlots >= InventorySlotCount)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("No slot left in inventory"));
+			return AmountToAdd;
+		}
 		Items.Add(DataAsset, AmountToAdd);
+		UsedSlots++;
 	}
-	
+
 	return AmountToAdd;
 }
 
