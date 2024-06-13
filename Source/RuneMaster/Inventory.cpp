@@ -68,6 +68,13 @@ UInventory::UInventory()
 
 int32 UInventory::AddItem(UItemDataAsset* DataAsset, int32 AmountToAdd)
 {
+	if (AmountToAdd <= 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Attempted to add a negative amount of %s to %s Inventory Component"),
+		       *DataAsset->GetItemName(), *GetOwner()->GetActorNameOrLabel());
+		return AmountToAdd;
+	}
+
 	const int32 ItemStackSize = DataAsset->GetStackSize();
 	if (Items.Contains(DataAsset))
 	{
@@ -101,7 +108,7 @@ int32 UInventory::AddItem(UItemDataAsset* DataAsset, int32 AmountToAdd)
 			return 0;
 		}
 	}
-		
+
 	// No more space for additional stacks
 	if (UsedSlots >= InventorySlotCount)
 	{
@@ -142,6 +149,7 @@ void UInventory::BeginPlay()
 	UE_LOG(LogTemp, Warning, TEXT("2 LeftOvers: %d"), LeftOvers);
 	LeftOvers = AddItem(DebugItemDAOne, 2000);
 	UE_LOG(LogTemp, Warning, TEXT("1 LeftOvers: %d"), LeftOvers);
+	AddItem(DebugItemDAOne, -200);
 
 	// const TSharedPtr<const FItemContainer> DebugPeekZero = PeekItem(1);
 	// if (DebugPeekZero.IsValid())

@@ -24,7 +24,7 @@ public:
 	/**
 	 * @brief Adds the item to the inventory if there is space
 	 * @param DataAsset The type of item to add
-	 * @param AmountToAdd How many of the item to add
+	 * @param AmountToAdd How many of the item to add, must be positive amount
 	 * @return Any items that will not fit in the inventory
 	 */
 	UFUNCTION(BlueprintCallable)
