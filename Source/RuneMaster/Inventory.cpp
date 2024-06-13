@@ -3,6 +3,8 @@
 
 #include "Inventory.h"
 
+#include "ItemDataAsset.h"
+
 // Sets default values for this component's properties
 UInventory::UInventory()
 {
@@ -79,7 +81,21 @@ int32 UInventory::AddItem(UItemDataAsset* DataAsset, int32 AmountToAdd)
 	//	  Return 0
 	if (Items.Contains(DataAsset))
 	{
-		Items[DataAsset] += AmountToAdd;
+		const int32 RemainingSpaceInCurrentStack = DataAsset->GetStackSize() - (Items[DataAsset] % DataAsset->GetStackSize());
+		// Add all as no addition
+		if (AmountToAdd < RemainingSpaceInCurrentStack)
+		{
+			Items[DataAsset] += AmountToAdd;
+			return 0;
+		}
+		else
+		{
+			Items[DataAsset] += RemainingSpaceInCurrentStack;
+			return AmountToAdd - RemainingSpaceInCurrentStack;
+		}
+		// UE_LOG(LogTemp, Warning, TEXT("Current: %d | ToAdd: %d | SpaceLeft: %d"), Items[DataAsset], AmountToAdd, SpaceInCurrentStack);
+
+		return AmountToAdd;
 	}
 	else
 	{
@@ -90,6 +106,7 @@ int32 UInventory::AddItem(UItemDataAsset* DataAsset, int32 AmountToAdd)
 		}
 		Items.Add(DataAsset, AmountToAdd);
 		UsedSlots++;
+		return 0;
 	}
 
 	return AmountToAdd;
@@ -99,14 +116,18 @@ int32 UInventory::AddItem(UItemDataAsset* DataAsset, int32 AmountToAdd)
 void UInventory::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	// TODO: Remove once UI is implemented
 	if (!DebugItemDAOne || !DebugItemDATwo) return;
-	
-	AddItem(DebugItemDAOne, 20);
-	AddItem(DebugItemDATwo, 30);
-	AddItem(DebugItemDAOne, 33);
-	
+
+	int32 LeftOvers = 0;
+	LeftOvers = AddItem(DebugItemDAOne, 50);
+	UE_LOG(LogTemp, Warning, TEXT("1 LeftOvers: %d"), LeftOvers);
+	LeftOvers = AddItem(DebugItemDATwo, 30);
+	UE_LOG(LogTemp, Warning, TEXT("2 LeftOvers: %d"), LeftOvers);
+	LeftOvers = AddItem(DebugItemDAOne, 53);
+	UE_LOG(LogTemp, Warning, TEXT("1 LeftOvers: %d"), LeftOvers);
+
 	// const TSharedPtr<const FItemContainer> DebugPeekZero = PeekItem(1);
 	// if (DebugPeekZero.IsValid())
 	// {

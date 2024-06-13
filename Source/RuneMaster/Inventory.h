@@ -57,6 +57,7 @@ public:
 private:
 	UPROPERTY(EditAnywhere, meta=(ClampMin=1, UIMin=1))
 	int32 InventorySlotCount = 20;
+	UPROPERTY(VisibleAnywhere)
 	int32 UsedSlots = 0;
 	
 	UPROPERTY(EditAnywhere)
