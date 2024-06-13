@@ -8,6 +8,8 @@
 
 class UItemDataAsset;
 
+DECLARE_MULTICAST_DELEGATE(FOnInventoryChangedSignature);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class RUNEMASTER_API UInventory : public UActorComponent
 {
@@ -46,6 +48,9 @@ public:
 	// 	 */
 	// 	TSharedPtr<const FItemContainerOld> PeekItem(uint16 SlotIndex);
 
+	FDelegateHandle RegisterToInventoryChangedEvent(const FOnInventoryChangedSignature::FDelegate& Delegate);
+	void UnregisterFromInventoryChangedEvent(FDelegateHandle DelegateHandle);
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -67,4 +72,6 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	TMap<UItemDataAsset*, uint32> Items;
+
+	FOnInventoryChangedSignature InventoryChangedEvent;
 };

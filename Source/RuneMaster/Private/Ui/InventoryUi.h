@@ -36,4 +36,9 @@ private:
 	int32 Rows = 0;
 
 	TWeakObjectPtr<UInventory> Inventory;
+	FDelegateHandle InventoryChangedHandle;
+	
+public:
+	UFUNCTION()
+	void OnInventoryChanged();
 };

@@ -83,6 +83,7 @@ int32 UInventory::AddItem(UItemDataAsset* DataAsset, int32 AmountToAdd)
 		if (AmountToAdd < RemainingSpaceInCurrentStack)
 		{
 			Items[DataAsset] += AmountToAdd;
+			InventoryChangedEvent.Broadcast();
 			return 0;
 		}
 
@@ -105,6 +106,7 @@ int32 UInventory::AddItem(UItemDataAsset* DataAsset, int32 AmountToAdd)
 		{
 			Items[DataAsset] = AmountToAdd;
 			UsedSlots++;
+			InventoryChangedEvent.Broadcast();
 			return 0;
 		}
 	}
@@ -112,6 +114,7 @@ int32 UInventory::AddItem(UItemDataAsset* DataAsset, int32 AmountToAdd)
 	// No more space for additional stacks
 	if (UsedSlots >= InventorySlotCount)
 	{
+		InventoryChangedEvent.Broadcast();
 		return AmountToAdd;
 	}
 
@@ -123,6 +126,7 @@ int32 UInventory::AddItem(UItemDataAsset* DataAsset, int32 AmountToAdd)
 	{
 		Items[DataAsset] += AmountToAdd;
 		UsedSlots += RemainingSlotsNeeded;
+		InventoryChangedEvent.Broadcast();
 		return 0;
 	}
 
@@ -131,7 +135,19 @@ int32 UInventory::AddItem(UItemDataAsset* DataAsset, int32 AmountToAdd)
 	Items[DataAsset] += CanBeAddedAmount;
 	UsedSlots += AvailableSlots;
 
+	InventoryChangedEvent.Broadcast();
 	return AmountToAdd - CanBeAddedAmount;
+}
+
+FDelegateHandle UInventory::RegisterToInventoryChangedEvent(const FOnInventoryChangedSignature::FDelegate& Delegate)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Adding Delegate"));
+	return InventoryChangedEvent.Add(Delegate);
+}
+
+void UInventory::UnregisterFromInventoryChangedEvent(const FDelegateHandle DelegateHandle)
+{
+	InventoryChangedEvent.Remove(DelegateHandle);
 }
 
 // Called when the game starts

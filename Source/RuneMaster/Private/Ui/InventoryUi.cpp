@@ -21,6 +21,11 @@ void UInventoryUi::SetupInventory(UInventory* InventoryComponent, const FVector2
 		return;
 	}
 
+	// Get Inventory updates
+	FOnInventoryChangedSignature::FDelegate Delegate;
+	Delegate.BindUObject(this, &UInventoryUi::OnInventoryChanged);
+	InventoryChangedHandle = InventoryComponent->RegisterToInventoryChangedEvent(Delegate);
+
 	Inventory = InventoryComponent;
 	const int32 InventorySlots = Inventory->GetSlotCount();
 	// Dummy slot to set the width of other slot items if less than the column max
@@ -60,4 +65,9 @@ void UInventoryUi::SetupInventory(UInventory* InventoryComponent, const FVector2
 	// Set the size of height of the grid
 	const float CellSize = GridCanvasSize.X / MaxColumns;
 	GridSizeBox->SetHeightOverride(CellSize * Rows);
+}
+
+void UInventoryUi::OnInventoryChanged()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Inventory Changed4"));
 }
