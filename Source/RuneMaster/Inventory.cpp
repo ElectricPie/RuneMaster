@@ -2,7 +2,6 @@
 
 
 #include "Inventory.h"
-#include "ItemContainer.h"
 
 // Sets default values for this component's properties
 UInventory::UInventory()
@@ -14,26 +13,94 @@ UInventory::UInventory()
 	// ...
 }
 
+// TSharedPtr<FItemContainerOld> UInventory::SwapItem(TSharedPtr<FItemContainerOld> ItemContainer, uint16 SlotIndex)
+// {
+// 	// Prevent values outside of the inventory size
+// 	SlotIndex = FMath::Clamp(SlotIndex, 0, InventorySlotCount);
+//
+// 	TSharedPtr<FItemContainerOld> ItemInSlot = ItemStacks[SlotIndex];
+//
+// 	if (ItemInSlot.IsValid() && ItemContainer.IsValid())
+// 	{
+// 		// Combine item stacks if of the same types
+// 		if (*ItemInSlot.Get() == *ItemContainer.Get())
+// 		{
+// 			// Prevent underflow
+// 			uint16 StackFreeSpace = 0;
+// 			if (ItemInSlot->Count < ItemInSlot->GetItemMaxStackSize())
+// 			{
+// 				StackFreeSpace = ItemInSlot->GetItemMaxStackSize() - ItemInSlot->Count;
+// 			}
+// 		
+// 			// Send back the items if the slot is full
+// 			if (StackFreeSpace <= 0)
+// 			{
+// 				return ItemContainer;
+// 			}
+// 		
+// 			// Add only what will fit to the stack and return the rest
+// 			if (StackFreeSpace < ItemContainer->Count)
+// 			{
+// 				const uint16 Overfill = ItemContainer->Count - StackFreeSpace;
+// 				ItemStacks[SlotIndex]->Count = ItemInSlot->GetItemMaxStackSize();
+//
+// 				return MakeShareable<FItemContainerOld>(new FItemContainerOld{ItemInSlot->GetItem(), Overfill});
+// 			}
+// 		
+// 			// Added all items to stack
+// 			ItemInSlot->Count += ItemContainer->Count;
+// 			return nullptr;
+// 		}
+// 	}
+//
+// 	// Swap the items
+// 	ItemStacks[SlotIndex] = ItemContainer;
+// 	return ItemInSlot;
+// }
+//
+// TSharedPtr<const FItemContainerOld> UInventory::PeekItem(const uint16 SlotIndex)
+// {
+// 	return ItemStacks[SlotIndex];
+// }
+
+
+int32 UInventory::AddItem(UItemDataAsset* DataAsset, int32 AmountToAdd)
+{
+	// Check if item is in inventory
+	//	True:
+	//	 Add as much to current stack limit
+	//    While UsedSlots < InventorySlots add 1 at most 1 stack until no items left
+	//     If UsedSlots => InventorySlots return left over amount
+	//    Return 0
+	//  False:
+	//   Check if UsedSlots are not maxed
+	//    While UsedSlots < InventorySlots add 1 at most 1 stack until no items left
+	//     If UsedSlots => InventorySlots return left over amount
+	//	  Return 0
+	if (Items.Contains(DataAsset))
+	{
+		Items[DataAsset] += AmountToAdd;
+	}
+	else
+	{
+		Items.Add(DataAsset, AmountToAdd);
+	}
+	
+	return AmountToAdd;
+}
 
 // Called when the game starts
 void UInventory::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
-	// Setup the inventory
-	ItemStacks = TArray<TSharedPtr<FItemContainer>>();
-	for (int32 i = 0; i < InventorySlotCount; i++)
-	{
-		ItemStacks.Add(nullptr);
-	}
-
+	
 	// TODO: Remove once UI is implemented
-	// if (!DebugItemDAOne || !DebugItemDATwo) return;
-	//
-	// TSharedPtr<FItemContainer> DebugItemOne = MakeShareable<FItemContainer>(new FItemContainer {*DebugItemDAOne, 97});
-	// TSharedPtr<FItemContainer> DebugItemTwo = MakeShareable<FItemContainer>(new FItemContainer {*DebugItemDATwo, 20});
-	//
+	if (!DebugItemDAOne || !DebugItemDATwo) return;
+	
+	AddItem(DebugItemDAOne, 20);
+	AddItem(DebugItemDATwo, 30);
+	AddItem(DebugItemDAOne, 33);
+	
 	// const TSharedPtr<const FItemContainer> DebugPeekZero = PeekItem(1);
 	// if (DebugPeekZero.IsValid())
 	// {
@@ -90,54 +157,4 @@ void UInventory::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompo
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
-}
-
-TSharedPtr<FItemContainer> UInventory::SwapItem(TSharedPtr<FItemContainer> ItemContainer, uint16 SlotIndex)
-{
-	// Prevent values outside of the inventory size
-	SlotIndex = FMath::Clamp(SlotIndex, 0, InventorySlotCount);
-
-	TSharedPtr<FItemContainer> ItemInSlot = ItemStacks[SlotIndex];
-
-	if (ItemInSlot.IsValid() && ItemContainer.IsValid())
-	{
-		// Combine item stacks if of the same types
-		if (*ItemInSlot.Get() == *ItemContainer.Get())
-		{
-			// Prevent underflow
-			uint16 StackFreeSpace = 0;
-			if (ItemInSlot->Count < ItemInSlot->GetItemMaxStackSize())
-			{
-				StackFreeSpace = ItemInSlot->GetItemMaxStackSize() - ItemInSlot->Count;
-			}
-		
-			// Send back the items if the slot is full
-			if (StackFreeSpace <= 0)
-			{
-				return ItemContainer;
-			}
-		
-			// Add only what will fit to the stack and return the rest
-			if (StackFreeSpace < ItemContainer->Count)
-			{
-				const uint16 Overfill = ItemContainer->Count - StackFreeSpace;
-				ItemStacks[SlotIndex]->Count = ItemInSlot->GetItemMaxStackSize();
-
-				return MakeShareable<FItemContainer>(new FItemContainer{ItemInSlot->GetItem(), Overfill});
-			}
-		
-			// Added all items to stack
-			ItemInSlot->Count += ItemContainer->Count;
-			return nullptr;
-		}
-	}
-
-	// Swap the items
-	ItemStacks[SlotIndex] = ItemContainer;
-	return ItemInSlot;
-}
-
-TSharedPtr<const FItemContainer> UInventory::PeekItem(const uint16 SlotIndex)
-{
-	return ItemStacks[SlotIndex];
 }
