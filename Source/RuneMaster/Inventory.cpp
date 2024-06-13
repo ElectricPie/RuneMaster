@@ -68,20 +68,9 @@ UInventory::UInventory()
 
 int32 UInventory::AddItem(UItemDataAsset* DataAsset, int32 AmountToAdd)
 {
-	// Check if item is in inventory
-	//	True:
-	//	 Add as much to current stack limit
-	//    While UsedSlots < InventorySlots add 1 at most 1 stack until no items left
-	//     If UsedSlots => InventorySlots return left over amount
-	//    Return 0
-	//  False:
-	//   Check if UsedSlots are not maxed
-	//    While UsedSlots < InventorySlots add 1 at most 1 stack until no items left
-	//     If UsedSlots => InventorySlots return left over amount
-	//	  Return 0
+	const int32 ItemStackSize = DataAsset->GetStackSize();
 	if (Items.Contains(DataAsset))
 	{
-		const int32 ItemStackSize = DataAsset->GetStackSize();
 		const int32 RemainingSpaceInCurrentStack = ItemStackSize - (Items[DataAsset] % ItemStackSize);
 		// Fill the stack with as much as possible
 		if (AmountToAdd < RemainingSpaceInCurrentStack)
@@ -89,45 +78,53 @@ int32 UInventory::AddItem(UItemDataAsset* DataAsset, int32 AmountToAdd)
 			Items[DataAsset] += AmountToAdd;
 			return 0;
 		}
+
+		// Fill the current stack
 		Items[DataAsset] += RemainingSpaceInCurrentStack;
 		AmountToAdd -= RemainingSpaceInCurrentStack;
-
-		// No more space for additional stacks
+	}
+	else
+	{
+		// New Item type added
 		if (UsedSlots >= InventorySlotCount)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("No slot left in inventory"));
 			return AmountToAdd;
 		}
-		
-		// Add as many stacks of the item as possible
-		const int32 RemainingSlotsNeeded = AmountToAdd / ItemStackSize + 1;
-		const int32 AvailableSlots = InventorySlotCount - UsedSlots;
-		// No leftovers if enough slots available
-		if (RemainingSlotsNeeded <= AvailableSlots)
+
+		Items.Add(DataAsset, 0);
+		// Only one stack needed
+		if (AmountToAdd < ItemStackSize)
 		{
-			Items[DataAsset] += AmountToAdd;
-			UsedSlots += RemainingSlotsNeeded;
+			Items[DataAsset] = AmountToAdd;
+			UsedSlots++;
 			return 0;
 		}
-
-		// Add as may stack till inventory is full
-		const int32 CanBeAddedAmount = ItemStackSize * AvailableSlots;
-		Items[DataAsset] += CanBeAddedAmount;
-		UsedSlots += RemainingSlotsNeeded;
-		
-		return AmountToAdd - CanBeAddedAmount;
 	}
-
-	// New Item type added
+		
+	// No more space for additional stacks
 	if (UsedSlots >= InventorySlotCount)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("No slot left in inventory"));
 		return AmountToAdd;
 	}
-	Items.Add(DataAsset, AmountToAdd);
-	UsedSlots++;
-	return 0;
 
-	return AmountToAdd;
+	// Add as many stacks of the item as possible
+	const int32 RemainingSlotsNeeded = AmountToAdd / ItemStackSize + 1;
+	const int32 AvailableSlots = InventorySlotCount - UsedSlots;
+	// No leftovers if enough slots available
+	if (RemainingSlotsNeeded <= AvailableSlots)
+	{
+		Items[DataAsset] += AmountToAdd;
+		UsedSlots += RemainingSlotsNeeded;
+		return 0;
+	}
+
+	// Add as may stack till inventory is full
+	const int32 CanBeAddedAmount = ItemStackSize * AvailableSlots;
+	Items[DataAsset] += CanBeAddedAmount;
+	UsedSlots += AvailableSlots;
+
+	return AmountToAdd - CanBeAddedAmount;
 }
 
 // Called when the game starts
@@ -141,7 +138,7 @@ void UInventory::BeginPlay()
 	int32 LeftOvers = 0;
 	LeftOvers = AddItem(DebugItemDAOne, 99);
 	UE_LOG(LogTemp, Warning, TEXT("1 LeftOvers: %d"), LeftOvers);
-	LeftOvers = AddItem(DebugItemDATwo, 30);
+	LeftOvers = AddItem(DebugItemDATwo, 500);
 	UE_LOG(LogTemp, Warning, TEXT("2 LeftOvers: %d"), LeftOvers);
 	LeftOvers = AddItem(DebugItemDAOne, 2000);
 	UE_LOG(LogTemp, Warning, TEXT("1 LeftOvers: %d"), LeftOvers);
